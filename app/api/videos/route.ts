@@ -1,60 +1,56 @@
+import { NextRequest, NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth.options";
 import { connectToDatabase } from "@/lib/db";
-import Video, { IVideo } from "@/models/Video";
-import { getServerSession } from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
-
-export async function GET() {
-    try {
-        await connectToDatabase();
-
-        const videos = await Video.find({}).sort({ createdAt: -1 }).lean()
-        if (!videos || videos.length === 0) {
-            return NextResponse.json([], { status: 200 })
-        }
-
-        return NextResponse.json(videos, { status: 200 })
-    } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Error while fetching videos" }, { status: 500 })
-    }
+import Video from "@/models/Video"; // Ensure you have a video model
+export async function GET(req: NextRequest) {
+  try {
+    await connectToDatabase();
+    const videos = await Video.find({}, "title description videoUrl thumbnailUrl").sort({ createdAt: -1 }).lean(); // Ensure correct fields are fetched
+    return NextResponse.json(videos, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching videos:", error);
+    return NextResponse.json({ error: "Failed to fetch videos" }, { status: 500 });
+  }
 }
+
 
 
 export async function POST(request: NextRequest) {
-
     try {
-        const session = await getServerSession(authOptions);
-        if (!session) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-        }
-
-        await connectToDatabase();
-
-
-        const body: IVideo = await request.json();
-
-        if (!body.title || !body.description || !body.videoUrl || !body.thumbnailUrl) {
-            return NextResponse.json({ error: "Missing required Fields" }, { status: 400 })
-        }
-
-        const videoData = {
-            ...body,
-            controls: body.controls || true,
-            transformation: {
-                height: 1920,
-                width: 1080,
-                quality: body.transformation?.quality || 100
-            }
-        }
-
-        const newVideo = await Video.create(videoData);
-
-        return NextResponse.json(newVideo, { status: 201 })
-
-
+      const session = await getServerSession(authOptions);
+      if (!session) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      }
+  
+      await connectToDatabase();
+  
+      // Get JSON body
+      const body = await request.json();
+      console.log("Received data:", body); // Debugging line
+  
+      const { title, description, videoUrl, thumbnailUrl } = body;
+  
+      // Check for missing fields
+      if (!title || !description || !videoUrl || !thumbnailUrl) {
+        return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+      }
+  
+      // Create a new video entry
+      const newVideo = await Video.create({
+        title,
+        description,
+        videoUrl,
+        thumbnailUrl,
+        _id: session.user.id, // Ensure `session.user.id` exists
+        
+      });
+  
+      console.log("Video saved:", newVideo); // Debugging line
+  
+      return NextResponse.json(newVideo, { status: 201 });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Failed to create video" }, { status: 500 })
+      console.error("Error saving video:", error);
+      return NextResponse.json({ error: "Failed to create video" }, { status: 500 });
     }
-}
+  }

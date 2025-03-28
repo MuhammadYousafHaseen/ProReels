@@ -1,35 +1,53 @@
-'use client'
-import { signOut, useSession } from 'next-auth/react'
-import Link from 'next/link'
-import React from 'react'
+"use client";
 
+import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
+import React from "react";
 
-function Header() {
-  
-   const {data:session} = useSession();
+const Header = () => {
+  const { data: session } = useSession();
 
-   const handleSignout = async () => {
+  const handleSignout = async () => {
     try {
-        await signOut()
+      await signOut();
     } catch (error) {
-        console.log(error);
+      console.error(error);
     }
-   }
-
+  };
 
   return (
-    <div>
-      <button onClick={handleSignout} type='button'>SignOut</button>
-      {session ? (
-        <div className="text-xl font-bold text-blue-500">Welcome</div>
-      ) : (
-        <div className="flex flex-row">
-          <Link href="/login">Login</Link>
-          <Link href="/register">Register</Link>
-        </div>
-      )}
-    </div>
-  )
-}
+    <nav className="navbar bg-base-100 shadow-md px-4 md:px-8">
+      <div className="flex-1">
+        <Link href="/" className="text-xl font-bold text-primary">
+          ProReels
+        </Link>
+      </div>
+      <div className="flex-none">
+        {session ? (
+          <div className="flex items-center gap-4">
+            <span className="hidden md:block text-gray-600 font-medium">
+              Welcome, {session.user?.email || "User"}
+            </span>
+            <button
+              onClick={handleSignout}
+              className="btn btn-sm btn-error text-white"
+            >
+              Sign Out
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-4">
+            <Link href="/login" className="btn btn-sm btn-primary">
+              Login
+            </Link>
+            <Link href="/register" className="btn btn-sm btn-outline">
+              Register
+            </Link>
+          </div>
+        )}
+      </div>
+    </nav>
+  );
+};
 
-export default Header
+export default Header;

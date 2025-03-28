@@ -4,7 +4,7 @@ import { ImageKitProvider } from "imagekitio-next";
 import { SessionProvider } from "next-auth/react";
 
 
-const urlEndpoint = process.env.IMAGEKIT_PUBLIC_URL_ENDPOINT;
+const urlEndpoint = process.env.NEXT_PUBLIC_IMAGE_URL_ENDPOINT;
 const publicKey = process.env.NEXT_PUBLIC_IMAGEKIT_PUBLIC_KEY;
 
 
@@ -23,12 +23,12 @@ export default function Providers({children}:{children:React.ReactNode}) {
           return { signature, expire, token };
         } catch (error) {
           console.error("Error authenticating with ImageKit:", error);
-          throw new Error(`ImageKit Authentication request failed`);
+          throw new Error("ImageKit Authentication request failed");
         }
       };
   return (
     <SessionProvider>
-      <ImageKitProvider urlEndpoint={urlEndpoint} publicKey={publicKey} authenticator={authenticator}>
+      <ImageKitProvider urlEndpoint={urlEndpoint!} publicKey={publicKey!} authenticator={authenticator}>
       {children}
       </ImageKitProvider>
     </SessionProvider>
