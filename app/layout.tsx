@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google"; // ✅ Import Inter font
+import { Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./components/Providers";
 import Header from "./components/Header";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter", // ✅ Define CSS variable for font
+  variable: "--font-inter",
 });
 
 export const metadata: Metadata = {
@@ -20,11 +20,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className={`${inter.variable} font-sans`}> {/* ✅ Apply font here */}
-      <Providers>
-        <Header />
-        <main className="container mx-auto px-4 py-8">{children}</main>
-      </Providers>
-    </div>
+    <html lang="en"> {/* ✅ Use <html> instead of <div> */}
+      <body className={`${inter.variable} font-sans`}>
+        <Providers>
+          <Header />
+          <main className="container mx-auto px-4 py-8">{children}</main>
+        </Providers>
+      </body>
+    </html>
   );
 }
