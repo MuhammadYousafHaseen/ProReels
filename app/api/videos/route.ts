@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth.options";
 import { connectToDatabase } from "@/lib/db";
 import Video from "@/models/Video"; // Ensure you have a video model
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     await connectToDatabase();
     const videos = await Video.find({}, "title description videoUrl thumbnailUrl").sort({ createdAt: -1 }).lean(); // Ensure correct fields are fetched
