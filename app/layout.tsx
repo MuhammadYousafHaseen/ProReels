@@ -16,17 +16,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en"> {/* ✅ Use <html> instead of <div> */}
-      <body className={`${inter.variable} font-sans`}>
-        <Providers>
-          <Header />
-          <main className="container mx-auto px-4 py-8">{children}</main>
-        </Providers>
-      </body>
-    </html>
+    <div className={`${inter.variable} font-sans`}>
+      <Providers>
+        <Header />
+        <main className="container mx-auto px-4 py-8">{children}</main>
+      </Providers>
+    </div>
   );
 }
