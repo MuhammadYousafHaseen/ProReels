@@ -18,11 +18,15 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <div className={`${inter.variable} font-sans`}>
+    <html lang="en" >
+    
       <Providers>
+        <body className={`${inter.variable} font-sans`}>
         <Header />
         <main className="container mx-auto px-4 py-8">{children}</main>
+        </body>
       </Providers>
-    </div>
+    
+    </html>
   );
 }

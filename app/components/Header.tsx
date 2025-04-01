@@ -3,9 +3,19 @@
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const { data: session } = useSession();
+    const router = useRouter();
+
+  const PostVidoeoPagae =  async () => {
+    const userRes = await fetch("/api/auth/user");
+      if (!userRes.ok) throw new Error("Failed to fetch user data");
+
+      const userData = await userRes.json();
+      router.push(`/dashboard/${userData.userId}`);
+  }
 
   const handleSignout = async () => {
     try {
@@ -34,6 +44,10 @@ const Header = () => {
             >
               Sign Out
             </button>
+            <button
+            onClick={PostVidoeoPagae}
+            className="btn bt-sm btn-primary"
+            >Post Video</button>
           </div>
         ) : (
           <div className="flex items-center gap-4">
